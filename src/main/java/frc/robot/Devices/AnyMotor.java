@@ -143,6 +143,7 @@ public abstract class AnyMotor extends ScheduledComponent {
      * @param volts The voltage to be applied.
      */
     public void setVoltage(double volts) {
+        targetSpeed = null;
         volts = isReversed ? -volts : volts;
         volts = MathPlus.clampAbsVal(volts, 2);
         uSetVoltage(volts);
