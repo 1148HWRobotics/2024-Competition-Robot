@@ -1,0 +1,3 @@
+ - shooter + auto aim
+ - get elevator working
+ - don't intake on elevator up
