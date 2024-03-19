@@ -3,7 +3,6 @@ package frc.robot.Auto.Positioning;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.Util.AngleMath;
 import frc.robot.Util.Vector2;
 
@@ -26,6 +25,7 @@ public class ResettablePosition {
         double rotation = AngleMath.getDelta(zeroPosition.angle, positioner.getTurnAngle());
 
         return new Pose2d(new Translation2d(currentTranslation.x, currentTranslation.y),
-                new Rotation2d(rotation * Math.PI / 180));
+                //new Rotation2d(rotation * Math.PI / 180));
+                Rotation2d.fromDegrees(rotation));
     }
 }

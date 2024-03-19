@@ -1,5 +1,7 @@
 package frc.robot.Util;
 
+import frc.robot.Core.Scheduler;
+
 public abstract class Promise {
     public abstract boolean isResolved();
 
@@ -20,6 +22,14 @@ public abstract class Promise {
 
             return returnPromise;
         }
+    }
+
+    public static Promise timeout(double seconds) {
+        SimplePromise prom = new SimplePromise();
+        Scheduler.setTimeout(() -> {
+            prom.resolve();
+        }, seconds);
+        return prom;
     }
 
     public static Promise all(Promise... proms) {

@@ -31,11 +31,11 @@ public class BinarySensor extends ScheduledComponent {
         return justChanged;
     }
 
-    public boolean disabled() {
+    public boolean justDisabled() {
         return justChanged() && !get();
     }
 
-    public boolean enabled() {
+    public boolean justEnabled() {
         return justChanged() && get();
     }
 

@@ -41,6 +41,7 @@ public class Scheduler {
     public static Promise runTask(Schedulable task) {
         var entry = new Entry(task,
                 Robot.getPhase() == Phase.Init ? Clear.Never : Clear.TaskEnd);
+        entry.task.start();
         schedulables.add(entry);
         return entry.promise;
     }

@@ -17,6 +17,7 @@ public class BetterPS4 extends PS4Controller {
 
         Container<Integer> lastPOV = new Container<Integer>(-1);
         Scheduler.registerTick(() -> {
+            povChanged.val = false;
             if (lastPOV.val != con.getPOV()) {
                 povChanged.val = true;
                 lastPOV.val = con.getPOV();

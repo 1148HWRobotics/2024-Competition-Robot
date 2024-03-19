@@ -16,13 +16,17 @@ public class FieldPositioning extends ScheduledComponent implements PositioningS
     LimeLight limeLight;
     final double correctionTime = 0.5;
 
+    boolean hasGottenLimeLightFrame = false;
+    public boolean hasGottenLimeLightFrame() {
+        return hasGottenLimeLightFrame;
+    }
+
     public FieldPositioning(PositionedDrive drive, Imu imu, LimeLight limeLight, Position startPos) {
         this.drive = drive;
         this.imu = imu;
         this.limeLight = limeLight;
         positionHistory.add(0, startPos);
     }
-
     double lastLimelightFrameTime = Double.NEGATIVE_INFINITY;
     Position lastLimelightFrameOffset = new Position(0, new Vector2(0, 0));
     LinkedList<Position> positionHistory = new LinkedList<>();
@@ -63,6 +67,7 @@ public class FieldPositioning extends ScheduledComponent implements PositioningS
         double rotationSpeed = (positionHistory.get(0).angle - positionHistory.get(1).angle) / 0.02;
         Vector2 translationSpeed = (positionHistory.get(0).position.minus(positionHistory.get(1).position))
                 .multiply(1 / 0.02).rotate(-getTurnAngle());
+                
         return new ChassisSpeeds(translationSpeed.x, translationSpeed.y, rotationSpeed / 180 * Math.PI);
     }
 
@@ -81,6 +86,7 @@ public class FieldPositioning extends ScheduledComponent implements PositioningS
         }
 
         if (isRationalLimelightFrame()) {
+            hasGottenLimeLightFrame = true;
             final double timeSinceLastFrame = Time.getTimeSincePower() - lastLimelightFrameTime;
             lastLimelightFrameTime = Time.getTimeSincePower();
             final Position limelightPositionAtFrame = limeLight.getRobotPosition();

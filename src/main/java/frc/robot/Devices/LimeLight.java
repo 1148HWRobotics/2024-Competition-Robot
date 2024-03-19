@@ -33,6 +33,11 @@ public class LimeLight extends ScheduledComponent {
 
         camEnabled = true;
     }
+    
+    public void setLEDState(int function){
+        //0 is default, 1 is off, 2 is blink, 3 is on
+        masterTable.getEntry("ledMode").setNumber(function);
+    }
 
     boolean botPoseChanged = false;
     long lastBotPoseChangeTime = 0;

@@ -14,10 +14,9 @@ import edu.wpi.first.wpilibj.RobotBase;
  * call.
  */
 public final class Main {
+
   private Main() {
   }
-
-  final static boolean test = false;
 
   /**
    * Main initialization function. Do not perform any initialization here.
@@ -26,11 +25,6 @@ public final class Main {
    * If you change your main robot class, change the parameter type.
    */
   public static void main(String... args) {
-    if(test){
-      RobotBase.startRobot(TestRobot::new);
-    }
-    else{
     RobotBase.startRobot(Robot::new);
-    }
   }
 }

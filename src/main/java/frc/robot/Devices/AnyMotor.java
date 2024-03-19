@@ -1,6 +1,7 @@
 package frc.robot.Devices;
 
 import frc.robot.Core.ScheduledComponent;
+import frc.robot.Core.Scheduler;
 import frc.robot.Util.MathPlus;
 import frc.robot.Util.MotionController;
 
@@ -10,15 +11,20 @@ import frc.robot.Util.MotionController;
  * This class should be extended to implement specific types of motors.
  */
 public abstract class AnyMotor extends ScheduledComponent {
-    Double maxSlew; // Maximum rate of voltage change over time.
     protected boolean isReversed; // Flag indicating whether the motor's direction is reversed.
 
     MotionController con;
 
     Double targetSpeed;
 
+    double maxAbsVoltage = 12;
+
+    public void setMaxVoltage(double voltage) {
+        maxAbsVoltage = voltage;
+    }
+
     public void setVelocityPD(MotionController con) {
-        this.con = con;
+        this.con = con.clone();
     }
 
     /**
@@ -35,8 +41,9 @@ public abstract class AnyMotor extends ScheduledComponent {
     @Override
     public void tick(double dTime) {
         if (targetSpeed != null) {
+            // reversed in setTargetSpeed
             var voltage = con.solve(targetSpeed - uGetVelocity(), dTime);
-            voltage = MathPlus.clampAbsVal(voltage, 2);
+            voltage = MathPlus.clampAbsVal(voltage, maxAbsVoltage);
             uSetVoltage(voltage);
         }
     }
@@ -49,24 +56,18 @@ public abstract class AnyMotor extends ScheduledComponent {
     public abstract int getID();
 
     /**
-     * Constructs an AnyMotor with specified reversal status and slew rate.
-     * 
-     * @param isReversed Whether the motor direction is reversed.
-     * @param maxSlew    The maximum slew rate for the motor.
-     */
-    public AnyMotor(boolean isReversed, double maxSlew) {
-        this.maxSlew = maxSlew;
-        this.isReversed = isReversed;
-    }
-
-    /**
      * Constructs an AnyMotor with specified reversal status.
      * 
      * @param isReversed Whether the motor direction is reversed.
      */
     public AnyMotor(boolean isReversed) {
         this.isReversed = isReversed;
-        maxSlew = null;
+
+        // resets the encoder in 1 tick, waits for motor to initialize
+        Scheduler.setTimeout(() -> {
+            setCurrentLimit(40);
+            resetEncoder();
+        }, 0);
     }
 
     /**
@@ -145,7 +146,7 @@ public abstract class AnyMotor extends ScheduledComponent {
     public void setVoltage(double volts) {
         targetSpeed = null;
         volts = isReversed ? -volts : volts;
-        volts = MathPlus.clampAbsVal(volts, 2);
+        volts = MathPlus.clampAbsVal(volts, maxAbsVoltage);
         uSetVoltage(volts);
     }
 

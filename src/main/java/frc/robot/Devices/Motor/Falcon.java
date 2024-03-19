@@ -2,14 +2,9 @@ package frc.robot.Devices.Motor;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import frc.robot.Devices.AnyMotor;
-import frc.robot.Util.GetDTime;
-import frc.robot.Util.LERP;
-import frc.robot.Util.MathPlus;
-import frc.robot.Util.MotionController;
-import frc.robot.Util.PDConstant;
 
 /**
  * The Falcon class extends the AnyMotor abstract class to provide an interface
@@ -37,12 +32,23 @@ public class Falcon extends AnyMotor {
     public void setCurrentLimit(int amps) {
         var config = falcon.getConfigurator();
         var currentConfig = new CurrentLimitsConfigs();
+
+        currentConfig.SupplyCurrentLimitEnable = true;
         currentConfig.SupplyCurrentLimit = amps;
         config.apply(currentConfig);
     }
 
+    public void setBrakeMode(boolean enabled) {
+        falcon.setNeutralMode(enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+    }
+
     protected double uGetVelocity() {
         return falcon.getVelocity().getValue();
+    }
+
+    public Falcon withMaxVoltage(double voltage) {
+        setMaxVoltage(voltage);
+        return this;
     }
 
     /**

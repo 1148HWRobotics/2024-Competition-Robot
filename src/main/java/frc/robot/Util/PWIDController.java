@@ -76,4 +76,8 @@ public class PWIDController implements MotionController {
         lastError = 0;
         accumulatedError = 0;
     }
+
+    public PWIDController clone() {
+        return new PWIDController(constant);
+    }
 }

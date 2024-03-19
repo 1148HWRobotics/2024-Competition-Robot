@@ -3,11 +3,14 @@ package frc.robot.Drive;
 import org.ejml.ops.QuickSort_S32;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import frc.robot.RobotContainer;
 import frc.robot.Core.ScheduledComponent;
 import frc.robot.Util.AngleMath;
 import frc.robot.Util.DeSpam;
 import frc.robot.Util.PDConstant;
 import frc.robot.Util.Vector2;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 
 /**
  * Drive is a class representing the swerve drive system of a robot.
@@ -42,6 +45,8 @@ public class Drive extends ScheduledComponent {
         this.alignmentThreshold = newThreshold;
     }
 
+    SwerveModulePD[] modules;
+
     /**
      * Constructor for Drive that sets up the swerve modules and the robot's
      * dimensions.
@@ -63,6 +68,9 @@ public class Drive extends ScheduledComponent {
         this.lengthInches = lengthInches;
         this.circumferenceInches = 2 * Math.PI
                 * Math.sqrt((widthInches * widthInches + lengthInches * lengthInches) / 2);
+        modules = new SwerveModulePD[] {
+                frontLeft, frontRight, backLeft, backRight
+        };
     }
 
     Vector2[] moduleTargets; // Targets for each module for driving and turning.
@@ -83,6 +91,9 @@ public class Drive extends ScheduledComponent {
      * @param errorOnLargeVoltage If true, throws an error when voltage exceeds 12V.
      */
     public void power(double goSpeed, double goDirectionDeg, double turnVelocity, boolean errorOnLargeVoltage) {
+        if (RobotContainer.isDriveDisabled)
+            stopGoPower();
+
         // Validation check for voltage limits.
         if (errorOnLargeVoltage) {
             if (Math.abs(goSpeed) > 12)
@@ -176,6 +187,9 @@ public class Drive extends ScheduledComponent {
     // Updates the swerve modules each tick based on the targets set by the power
     // method.
     protected void tick(double dTime) {
+        if (RobotContainer.isDriveDisabled)
+            stopGoPower();
+
         double error = 0;
         double total = 0;
         if (moduleTargets != null) {

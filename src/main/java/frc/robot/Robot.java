@@ -20,6 +20,8 @@ import frc.robot.Util.Phase;
  * project.
  */
 public class Robot extends TimedRobot {
+  public static final boolean useTestRobot = false;
+
   RobotPolicy policy;
   GetDTime dTGet = new GetDTime();
 
@@ -43,7 +45,10 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     isInit = true;
     phase = Phase.Init;
-    policy = RobotContainer.init();
+    if (useTestRobot)
+      policy = TestRobot.init();
+    else
+      policy = RobotContainer.init();
   }
 
   @Override
